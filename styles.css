@@ -1,0 +1,52 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    font-size: 62.5%;
+    margin: 0;
+    padding: 0;
+    background-color: #3ca2a2;
+    font-family: 'McLaren', cursive;
+}
+main{
+    display: grid;
+    place-content: center;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+canvas{
+    background-color: #dfece6;
+    margin: 20px;
+    border: 5px solid #2d2d29;
+}
+button{
+    margin: 12px;
+    padding: 8px 12px;
+    background-color: #92c7a3;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 2px solid #215a6d;
+    box-shadow: 0 0 10px #215a6d;
+    font-family: 'McLaren', cursive;
+    color: #2d2d29;
+}
+p{
+    color: #dfece6;
+    font-size: 1.5rem;
+}
+@media (max-width:500px){
+    .btn-directions button:first-child{
+        display: block;
+        margin: 0 auto;
+    }
+}
+/*.color1 { #2d2d29 };
+.color2 { #215a6d };
+.color3 { #3ca2a2 };
+.color4 { #92c7a3 };
+.color5 { #dfece6 };*/
