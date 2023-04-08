@@ -32,6 +32,15 @@ let positionJugador = {
     y:undefined
 }
 
+let posicionGift = {
+    x:undefined,
+    y:undefined
+}
+
+let bombitas = [];
+
+let level = 0;
+
 function starGame(){
     //Dividir el cuadro de canvas en 10
     elementsSize = canvasSize / 10;
@@ -44,7 +53,7 @@ function starGame(){
             game.fillText(emojis["X"],elementsSize*i+5,elementsSize*j-15);
         }
     } */
-    renderMap(0);
+    renderMap(level);
     //Imprimir emojis según según mapa
     for (let i = 1; i <= 10; i++) {
         for (let j = 1; j <= 10; j++) {
@@ -53,6 +62,18 @@ function starGame(){
             if(mapRowCols[i-1][j-1]=="O"){
                 positionJugador.y = elementsSize*i, //filas
                 positionJugador.x = elementsSize*j  //columnas
+            }
+            //Buscar la posición del regalo
+            else if(mapRowCols[i-1][j-1]=="I"){
+                posicionGift.y = elementsSize*i,
+                posicionGift.x = elementsSize*j
+            }
+            //Buscar la posición de las bombas y agregarlas al arreglo bombitas
+            else if(mapRowCols[i-1][j-1]=="X"){
+                bombitas.push({
+                    positionY : elementsSize*i,
+                    positionX : elementsSize*j
+                })
             }
         }
     }
@@ -65,11 +86,14 @@ function starGame(){
 
 //Separar cada elemento del array map en un arreglo nuevo, primero en columnas y luego en filas
 function renderMap(number){
-    //for (const element of maps) {
+    if(maps[number]){ //compara si existe el elemento en el mapa, en caso ya se haya llegado al último nivel y se complete.
         const mapCols = maps[number].trim().split("\n");
         mapRowCols = mapCols.map(row => row.trim().split(""));
         //console.log({mapCols,mapRowCols});
-    //}
+    }
+    else{
+        console.log("Terminaste el juego!!!");
+    }
 }
 
 //MOVIMIENTO BOTONES
@@ -94,7 +118,7 @@ function teclaSpecific(e){
 
 function teclaUp(){
     console.log("Te movista hacia arriba");
-    if(positionJugador.y > 100){ //evitar que se salga del mapa
+    if(positionJugador.y > elementsSize){ //evitar que se salga del mapa
         positionJugador.y -= elementsSize;
     }
     movePlayer();
@@ -108,7 +132,7 @@ function teclaDown(){
 }
 function teclaLeft(){
     console.log("Te movista hacia izquierda");
-    if(positionJugador.x > 100){
+    if(positionJugador.x > elementsSize){
         positionJugador.x -= elementsSize;
     }
     movePlayer();
@@ -130,5 +154,29 @@ function movePlayer(){
         }
     }
     game.fillText(emojis["PLAYER"],positionJugador.x+5,positionJugador.y-15);//imprimir al jugador
+
+    //Comparar la colisión entre jugador y el regalo
+    if((positionJugador.x).toFixed(2) == posicionGift.x && (positionJugador.y).toFixed(2) == posicionGift.y){
+        console.log("Ganaste!!!");
+        winLevel();
+    }
+    //Comparar la colisión con las bombas
+    for (let i = 0; i < bombitas.length; i++) {
+        if((positionJugador.x).toFixed(2) == (bombitas[i].positionX).toFixed(2) && (positionJugador.y).toFixed(2) == (bombitas[i].positionY).toFixed(2)){
+            console.log("Boom!!! REVENTASTE");
+            failed();
+        }
+    }
 }
 
+//Pasar al siguiente nivel
+function winLevel(){
+    level++;
+    bombitas = []; //limpiar array al renderizar nuevamente el mapa
+    starGame();
+}
+//Regresar al inicio del nivel actual
+function failed(){
+    bombitas = []; //limpiar array al renderizar nuevamente el mapa
+    starGame();
+}
