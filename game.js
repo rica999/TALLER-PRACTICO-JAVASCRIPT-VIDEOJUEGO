@@ -8,6 +8,8 @@ window.addEventListener("load",resizeCanvas);
 //Cambiar tamaño de canvas cuando se actualzia el tamaño de pantalla (responsive)
 window.addEventListener("resize",resizeCanvas);
 
+let hearths = document.querySelector("#lives");
+
 let canvasSize;
 
 function resizeCanvas(){
@@ -40,6 +42,8 @@ let posicionGift = {
 let bombitas = [];
 
 let level = 0;
+
+let vidas = 3;
 
 function starGame(){
     //Dividir el cuadro de canvas en 10
@@ -77,6 +81,10 @@ function starGame(){
             }
         }
     }
+    //Imprimir vidas
+    const totalVidas = Array(vidas).fill(emojis["HEARTH"]); //crear un array a partir de un total de elementos (vidas) y llenarlo con el elemento elegido (emojis["hearth"])
+    lives.innerHTML=totalVidas.join(" ");
+
     movePlayer();
     //Métodos de canvas
     /* game.fillStyle = "rgb(0, 162, 232)";
@@ -177,6 +185,15 @@ function winLevel(){
 }
 //Regresar al inicio del nivel actual
 function failed(){
-    bombitas = []; //limpiar array al renderizar nuevamente el mapa
-    starGame();
+    vidas--; //restar una vida por cada fail
+    if(vidas==0){
+        level = 0;//volver al nivel 1
+        vidas = 3;//reiniciar vidas
+        bombitas = []; //limpiar array al renderizar nuevamente el mapa
+        starGame();
+    }
+    else{
+        bombitas = []; //limpiar array al renderizar nuevamente el mapa
+        starGame();
+    }
 }
