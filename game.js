@@ -1,6 +1,6 @@
 //Variable que almacena la etiqueta canvas
 const canvas = document.querySelector("#game");
-//Creación del espacio de juego, en este caso en 2d
+//Creación del espacio de juego, en este caso en 3d
 const game = canvas.getContext("2d");
 
 //Cangar el canvas luego de haberse cargado por completo el HTML
@@ -24,21 +24,9 @@ let canvasSize;
 let timeStart;
 let timeInterval;
 
+let totalVidas;
+
 let recordFinal = document.querySelector("#recordFinal");
-
-function resizeCanvas(){
-    //Para que según la resolución de pantalla agregue el tamaño de width y height al canvas
-    if(window.innerHeight>window.innerWidth){
-        canvasSize = window.innerWidth * 0.8;
-    }
-    else{
-        canvasSize = window.innerHeight * 0.8;
-    }
-    canvas.setAttribute("width",canvasSize); //al actualizarse, borra el contenido dentro del mapa
-    canvas.setAttribute("height",canvasSize);
-
-    starGame();
-}
 
 let mapRowCols;
 let elementsSize;
@@ -64,11 +52,28 @@ let timeFinal;
 let secondFinal;
 let minuteFinal;
 
+function resizeCanvas(){
+    //Para que según la resolución de pantalla agregue el tamaño de width y height al canvas
+    if(window.innerHeight>window.innerWidth){
+        canvasSize = window.innerWidth * 0.8;
+    }
+    else{
+        canvasSize = window.innerHeight * 0.8;
+    }
+    canvas.setAttribute("width",canvasSize); //al actualizarse, borra el contenido dentro del mapa
+    canvas.setAttribute("height",canvasSize);
+    //Para que cuando cambia el tamaño de pantalla se quede en el lugar de inicio
+    positionJugador.x = undefined;
+    positionJugador.y = undefined;
+
+    starGame();
+}
+
 function starGame(){
     //Dividir el cuadro de canvas en 10
     elementsSize = canvasSize / 10;
 
-    game.font = (elementsSize-12) + "px Verdana"; //siempre el tamaño con el tipo de letra. Resto 12 porque...para que no ocupe más de la cuenta.
+    game.font = (elementsSize-13) + "px Verdana"; //siempre el tamaño con el tipo de letra. Resto 13 porque...para que no ocupe más de la cuenta.
     game.textAlign = "end"; //cada bombita acabara en la primera coordenada de fillText
 
     if(level<maps.length){ //Verificar si aún no se termina el último nivel del juego
@@ -97,7 +102,7 @@ function starGame(){
             }
         }
         //Imprimir vidas
-        const totalVidas = Array(vidas).fill(emojis["HEARTH"]); //crear un array a partir de un total de elementos (vidas) y llenarlo con el elemento elegido (emojis["hearth"])
+        totalVidas = Array(vidas).fill(emojis["HEARTH"]); //crear un array a partir de un total de elementos (vidas) y llenarlo con el elemento elegido (emojis["hearth"])
         lives.innerHTML=totalVidas.join(" ");
 
         //Imprimir tiempo de inicio de jugador
@@ -116,18 +121,30 @@ function starGame(){
     }
     else{//Si ya terminó el juego
         game.clearRect(0,0,canvasSize,canvasSize); //borrar el contenido del mapa
-        game.font="45px Verdana";
-        game.textAlign = "center";
-        game.fillText("Terminaste el juego!!!",canvasSize/2,canvasSize/9);
-        game.font="85px Verdana";
-        game.fillText("🏆",canvasSize/2,canvasSize/2);
+        letterSizeEndGame();
         clearInterval(timeInterval);//parar el intervalo del tiempo de jugador
         recordValue();
         btnDirections.classList.add("hidden");
         btnNewGame.classList.remove("hidden");
     }
 }
-
+//Tamaño de vista de JUEGO TERMINADO
+function letterSizeEndGame(){
+    if(window.innerWidth<600){
+        game.font="20px Verdana";
+        game.textAlign = "center";
+        game.fillText("Terminaste el juego!!!",canvasSize/2,canvasSize/9);
+        game.font="35px Verdana";
+        game.fillText("🏆",canvasSize/2,canvasSize/3);
+    }
+    else{
+        game.font="45px Verdana";
+        game.textAlign = "center";
+        game.fillText("Terminaste el juego!!!",canvasSize/2,canvasSize/9);
+        game.font="85px Verdana";
+        game.fillText("🏆",canvasSize/2,canvasSize/3);
+    }
+}
 //Separar cada elemento del array map en un arreglo nuevo, primero en columnas y luego en filas
 function renderMap(number){
     if(maps[number]){ //compara si existe el elemento en el mapa, en caso ya se haya llegado al último nivel y se complete.
@@ -151,15 +168,27 @@ function recordValue(){
             secondFinal = new Date(Number(localStorage.getItem("record"))).getSeconds();
             minuteFinal = new Date(Number(localStorage.getItem("record"))).getMinutes();
             timeRecord.innerHTML = minuteFinal+" min "+secondFinal+" segundos";
-            game.font="25px Verdana";
-            game.fillText("Superaste tu récord!!! Ahora tu récord es: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+            if(window.innerWidth<600){
+                game.font="10px Verdana";
+                game.fillText("Superaste tu récord!!! Ahora tu récord es: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+            }
+            else{
+                game.font="35px Verdana";
+                game.fillText("Superaste tu récord!!! Ahora tu récord es: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+            }
         }
         else{
             localStorage.getItem("record");
             secondFinal = new Date(Number(localStorage.getItem("record"))).getSeconds();
             minuteFinal = new Date(Number(localStorage.getItem("record"))).getMinutes();
-            game.font="25px Verdana";
-            game.fillText("No superaste tu récord de: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+            if(window.innerWidth<1000){
+                game.font="10px Verdana";
+                game.fillText("No superaste tu récord de: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+            }
+            else{
+                game.font="35px Verdana";
+                game.fillText("No superaste tu récord de: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+            }
         }
     }
 }
@@ -221,13 +250,13 @@ function movePlayer(){
         game.fillText(emojis["PLAYER"],positionJugador.x+5,positionJugador.y-15);//imprimir al jugador
 
         //Comparar la colisión entre jugador y el regalo
-        if((positionJugador.x).toFixed(2) == posicionGift.x && (positionJugador.y).toFixed(2) == posicionGift.y){
+        if((positionJugador.x).toFixed(3) == (posicionGift.x).toFixed(3) && (positionJugador.y).toFixed(3) == (posicionGift.y).toFixed(3)){
             console.log("Ganaste!!!");
             winLevel();
         }
         //Comparar la colisión con las bombas
         for (let i = 0; i < bombitas.length; i++) {
-            if((positionJugador.x).toFixed(2) == (bombitas[i].positionX).toFixed(2) && (positionJugador.y).toFixed(2) == (bombitas[i].positionY).toFixed(2)){
+            if((positionJugador.x).toFixed(3) == (bombitas[i].positionX).toFixed(3) && (positionJugador.y).toFixed(3) == (bombitas[i].positionY).toFixed(3)){
                 console.log("Boom!!! REVENTASTE");
                 failed();
             }
@@ -244,15 +273,10 @@ function winLevel(){
 //Regresar al inicio del nivel actual
 function failed(){
     vidas--; //restar una vida por cada fail
+    lives.innerHTML="";
     if(vidas==0){
         game.clearRect(0,0,canvasSize,canvasSize); //borrar el contenido del mapa
-        game.font="45px Verdana";
-        game.textAlign = "center";
-        game.fillText("Perdiste tus vidas",canvasSize/2,canvasSize/9);
-        game.font="85px Verdana";
-        game.fillText("😪",canvasSize/2,canvasSize/2);
-        game.font="45px Verdana";
-        game.fillText("¿Deseas continuar?",canvasSize/2,canvasSize-canvasSize/3);
+        letterSizeContinue();
         btnDirections.classList.add("hidden");
         btnSelection.classList.remove("hidden");
         btnYes.addEventListener("click",()=>{
@@ -274,6 +298,27 @@ function failed(){
     else{
         bombitas = []; //limpiar array al renderizar nuevamente el mapa
         starGame();
+    }
+}
+//Tamaño de vista de QUIERES CONTINUAR
+function letterSizeContinue(){
+    if(window.innerWidth<600){
+        game.font="25px Verdana";
+        game.textAlign = "center";
+        game.fillText("Perdiste tus vidas",canvasSize/2,canvasSize/9);
+        game.font="45px Verdana";
+        game.fillText("😪",canvasSize/2,canvasSize/3);
+        game.font="25px Verdana";
+        game.fillText("¿Deseas continuar?",canvasSize/2,canvasSize-canvasSize/3);
+    }
+    else{
+        game.font="45px Verdana";
+        game.textAlign = "center";
+        game.fillText("Perdiste tus vidas",canvasSize/2,canvasSize/9);
+        game.font="85px Verdana";
+        game.fillText("😪",canvasSize/2,canvasSize/3);
+        game.font="45px Verdana";
+        game.fillText("¿Deseas continuar?",canvasSize/2,canvasSize-canvasSize/3);
     }
 }
 

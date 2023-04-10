@@ -15,6 +15,7 @@ main{
 /*PORTADA JUEGO*/
 .container-portrait-game{
     height: 100vh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -24,6 +25,7 @@ main{
     font-size: 100px;
     color: #215a6d;
     -webkit-text-stroke: 4px #2d2d29;
+    text-align: center;
 }
 .btn-start-game{
     font-size: 24px;
@@ -36,6 +38,7 @@ main{
 }
 figure{
     margin: 0;
+    text-align: center;
 }
 /*JUEGO*/
 .container-game{
@@ -43,6 +46,7 @@ figure{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 canvas{
     background-color: #dfece6;
@@ -84,10 +88,43 @@ span{
     font-size: 24px;
     margin: 8px 0;
 }
+@media (max-width:1100px){
+    .container-portrait-game h1{
+        font-size: 80px;
+    }
+}
+@media (max-width:920px){
+    .description-game{
+        flex-direction: column;
+    }
+}
 @media (max-width:500px){
     .btn-directions button:first-child{
         display: block;
         margin: 0 auto;
+    }
+}
+@media (max-width:800px){
+    figure img{
+        width: 60%;
+    }
+    .container-portrait-game h1{
+        font-size: 50px;
+        -webkit-text-stroke: 1px #2d2d29;
+    }
+    .btn-start-game{
+        margin-right: 0;
+    }
+}
+@media (max-width:400px){
+    .container-portrait-game h1{
+        font-size: 30px;
+    }
+    .description-game p{
+        font-size: 18px;
+    }
+    button{
+        font-size: 10px;
     }
 }
 /*.color1 { #2d2d29 };
