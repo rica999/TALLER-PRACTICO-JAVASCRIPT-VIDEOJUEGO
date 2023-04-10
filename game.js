@@ -173,7 +173,7 @@ function recordValue(){
                 game.fillText("Superaste tu récord!!!: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
             }
             else{
-                game.font="35px Verdana";
+                game.font="25px Verdana";
                 game.fillText("Superaste tu récord!!!: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
             }
         }
@@ -186,7 +186,7 @@ function recordValue(){
                 game.fillText("No superaste tu récord de: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
             }
             else{
-                game.font="35px Verdana";
+                game.font="25px Verdana";
                 game.fillText("No superaste tu récord de: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
             }
         }
