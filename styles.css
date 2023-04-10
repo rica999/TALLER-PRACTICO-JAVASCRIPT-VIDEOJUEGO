@@ -12,12 +12,36 @@ main{
     display: grid;
     place-content: center;
 }
-.container{
+/*PORTADA JUEGO*/
+.container-portrait-game{
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+}
+.container-portrait-game h1{
+    font-size: 100px;
+    color: #215a6d;
+    -webkit-text-stroke: 4px #2d2d29;
+}
+.btn-start-game,.btn-reload-game{
+    font-size: 24px;
+    margin: 8px 0;
+}
+.btn-start-game a{
+    text-decoration: none;
+    color: #2d2d29;
+}
+figure{
+    margin: 0;
+}
+/*JUEGO*/
+.container-game{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 canvas{
     background-color: #dfece6;
@@ -38,6 +62,22 @@ button{
 p{
     color: #dfece6;
     font-size: 1.5rem;
+}
+span{
+    color: #215a6d;
+}
+.description-game{
+    display: flex;
+}
+.description-game p{
+    margin: 0 12px;
+}
+#btnReload a{
+    text-decoration: none;
+    color: #2d2d29;
+}
+.hidden{
+    display: none;
 }
 @media (max-width:500px){
     .btn-directions button:first-child{

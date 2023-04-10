@@ -9,8 +9,18 @@ window.addEventListener("load",resizeCanvas);
 window.addEventListener("resize",resizeCanvas);
 
 let hearths = document.querySelector("#lives");
+let timePlay = document.querySelector("#timePlay");
+let timeRecord = document.querySelector("#timeRecord");
+
+let btnDirections = document.querySelector("#btnDirections");
+let btnNewGame = document.querySelector("#btnNewGame");
 
 let canvasSize;
+
+let timeStart;
+let timeInterval;
+
+let recordFinal = document.querySelector("#recordFinal");
 
 function resizeCanvas(){
     //Para que según la resolución de pantalla agregue el tamaño de width y height al canvas
@@ -45,51 +55,73 @@ let level = 0;
 
 let vidas = 3;
 
+let timePlayer;
+let timeFinal;
+let secondFinal;
+let minuteFinal;
+
 function starGame(){
     //Dividir el cuadro de canvas en 10
     elementsSize = canvasSize / 10;
 
     game.font = (elementsSize-12) + "px Verdana"; //siempre el tamaño con el tipo de letra. Resto 12 porque...para que no ocupe más de la cuenta.
     game.textAlign = "end"; //cada bombita acabara en la primera coordenada de fillText
-    //Imprimir 10 veces la bombita al lado del otro y en todas las filas
-    /* for (let i = 1; i <= 10; i++) {
-        for (let j = 1; j <= 10; j++) {
-            game.fillText(emojis["X"],elementsSize*i+5,elementsSize*j-15);
-        }
-    } */
-    renderMap(level);
-    //Imprimir emojis según según mapa
-    for (let i = 1; i <= 10; i++) {
-        for (let j = 1; j <= 10; j++) {
-            game.fillText(emojis[mapRowCols[j-1][i-1]],elementsSize*i+5,elementsSize*j-15);
-            //Buscar la posición de la puerta y almacenar en el objeto de posicionJugador
-            if(mapRowCols[i-1][j-1]=="O"){
-                positionJugador.y = elementsSize*i, //filas
-                positionJugador.x = elementsSize*j  //columnas
-            }
-            //Buscar la posición del regalo
-            else if(mapRowCols[i-1][j-1]=="I"){
-                posicionGift.y = elementsSize*i,
-                posicionGift.x = elementsSize*j
-            }
-            //Buscar la posición de las bombas y agregarlas al arreglo bombitas
-            else if(mapRowCols[i-1][j-1]=="X"){
-                bombitas.push({
-                    positionY : elementsSize*i,
-                    positionX : elementsSize*j
-                })
+
+    if(level<maps.length){ //Verificar si aún no se termina el último nivel del juego
+        renderMap(level);
+        //Imprimir emojis según según mapa
+        for (let i = 1; i <= 10; i++) {
+            for (let j = 1; j <= 10; j++) {
+                game.fillText(emojis[mapRowCols[j-1][i-1]],elementsSize*i+5,elementsSize*j-15);
+                //Buscar la posición de la puerta y almacenar en el objeto de posicionJugador
+                if(mapRowCols[i-1][j-1]=="O"){
+                    positionJugador.y = elementsSize*i, //filas
+                    positionJugador.x = elementsSize*j  //columnas
+                }
+                //Buscar la posición del regalo
+                else if(mapRowCols[i-1][j-1]=="I"){
+                    posicionGift.y = elementsSize*i,
+                    posicionGift.x = elementsSize*j
+                }
+                //Buscar la posición de las bombas y agregarlas al arreglo bombitas
+                else if(mapRowCols[i-1][j-1]=="X"){
+                    bombitas.push({
+                        positionY : elementsSize*i,
+                        positionX : elementsSize*j
+                    })
+                }
             }
         }
+        //Imprimir vidas
+        const totalVidas = Array(vidas).fill(emojis["HEARTH"]); //crear un array a partir de un total de elementos (vidas) y llenarlo con el elemento elegido (emojis["hearth"])
+        lives.innerHTML=totalVidas.join(" ");
+
+        //Imprimir tiempo de inicio de jugador
+        if (!timeStart) { //valida si el tiempo de juego ya inicio
+            timeStart = Date.now();  //guarda el tiempo trancurrido desde 01/01/70 en milisegundos
+            timeInterval = setInterval(showTime, 100);
+        }
+        //Comparar si localStorage tiene alguna variable para imprimir o no contenido en el record
+        if(localStorage.length==0){
+            timeRecord.innerHTML="";
+        }
+        else{
+            timeRecord.innerHTML=new Date(Number(localStorage.getItem("record"))).getMinutes()+" min "+new Date(Number(localStorage.getItem("record"))).getSeconds()+" segundos";
+        }
+        movePlayer();
     }
-    //Imprimir vidas
-    const totalVidas = Array(vidas).fill(emojis["HEARTH"]); //crear un array a partir de un total de elementos (vidas) y llenarlo con el elemento elegido (emojis["hearth"])
-    lives.innerHTML=totalVidas.join(" ");
-
-    movePlayer();
-    //Métodos de canvas
-    /* game.fillStyle = "rgb(0, 162, 232)";
-    game.fillRect(0,0,50,50); */ //dibujuar un rectangulo (x,y,ancho,alto)
-
+    else{//Si ya terminó el juego
+        game.clearRect(0,0,canvasSize,canvasSize); //borrar el contenido del mapa
+        game.font="45px Verdana";
+        game.textAlign = "center";
+        game.fillText("Terminaste el juego!!!",canvasSize/2,canvasSize/9);
+        game.font="85px Verdana";
+        game.fillText("🏆",canvasSize/2,canvasSize/2);
+        clearInterval(timeInterval);//parar el intervalo del tiempo de jugador
+        recordValue();
+        btnDirections.classList.add("hidden");
+        btnNewGame.classList.remove("hidden");
+    }
 }
 
 //Separar cada elemento del array map en un arreglo nuevo, primero en columnas y luego en filas
@@ -97,10 +129,34 @@ function renderMap(number){
     if(maps[number]){ //compara si existe el elemento en el mapa, en caso ya se haya llegado al último nivel y se complete.
         const mapCols = maps[number].trim().split("\n");
         mapRowCols = mapCols.map(row => row.trim().split(""));
-        //console.log({mapCols,mapRowCols});
     }
-    else{
-        console.log("Terminaste el juego!!!");
+}
+
+function recordValue(){
+    timeFinal = timePlayer; //almacenar el tiempo cuando finaliza el último nivel
+    if(!localStorage.getItem("record")){//compara si localstorage tiene alguna variable almacenada con el nombre record
+        localStorage.setItem("record",timeFinal);//guardar el record
+        secondFinal = new Date(Number(localStorage.getItem("record"))).getSeconds();//obtener segundos del valor del localstorage
+        minuteFinal = new Date(Number(localStorage.getItem("record"))).getMinutes();//obtener minutos del valor del localstorage
+        timeRecord.innerHTML = minuteFinal+" min "+secondFinal+" segundos";
+    }
+    else{ //sustituir el record del jugador
+        if(timeFinal < localStorage.getItem("record")){
+            localStorage.removeItem("record");
+            localStorage.setItem("record",timeFinal);//guardar el record
+            secondFinal = new Date(Number(localStorage.getItem("record"))).getSeconds();
+            minuteFinal = new Date(Number(localStorage.getItem("record"))).getMinutes();
+            timeRecord.innerHTML = minuteFinal+" min "+secondFinal+" segundos";
+            game.font="25px Verdana";
+            game.fillText("Superaste tu récord!!! Ahora tu récord es: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+        }
+        else{
+            localStorage.getItem("record");
+            secondFinal = new Date(Number(localStorage.getItem("record"))).getSeconds();
+            minuteFinal = new Date(Number(localStorage.getItem("record"))).getMinutes();
+            game.font="25px Verdana";
+            game.fillText("No superaste tu récord de: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+        }
     }
 }
 
@@ -125,28 +181,24 @@ function teclaSpecific(e){
 }
 
 function teclaUp(){
-    console.log("Te movista hacia arriba");
     if(positionJugador.y > elementsSize){ //evitar que se salga del mapa
         positionJugador.y -= elementsSize;
     }
     movePlayer();
 }
 function teclaDown(){
-    console.log("Te movista hacia abajo");
     if(positionJugador.y < canvasSize){
         positionJugador.y += elementsSize;
     }
     movePlayer();
 }
 function teclaLeft(){
-    console.log("Te movista hacia izquierda");
     if(positionJugador.x > elementsSize){
         positionJugador.x -= elementsSize;
     }
     movePlayer();
 }
 function teclaRight(){
-    console.log("Te movista hacia derecha");
     if(positionJugador.x < canvasSize){
         positionJugador.x += elementsSize;
     }
@@ -154,25 +206,27 @@ function teclaRight(){
 }
 //Imprimir jugador cada vez que haya un cambio de posición
 function movePlayer(){
-    //Eliminar posición anterior jugador por cada movimiento.
-    game.clearRect(0,0,canvasSize,canvasSize);//borrar todo el contenido del canvas
-    for (let i = 1; i <= 10; i++) { //volver a renderizar el mapa con la nueva posición del jugador
-        for (let j = 1; j <= 10; j++) {
-            game.fillText(emojis[mapRowCols[j-1][i-1]],elementsSize*i+5,elementsSize*j-15);
+    if(level<maps.length){
+        //Eliminar posición anterior jugador por cada movimiento.
+        game.clearRect(0,0,canvasSize,canvasSize);//borrar todo el contenido del canvas
+        for (let i = 1; i <= 10; i++) { //volver a renderizar el mapa con la nueva posición del jugador
+            for (let j = 1; j <= 10; j++) {
+                game.fillText(emojis[mapRowCols[j-1][i-1]],elementsSize*i+5,elementsSize*j-15);
+            }
         }
-    }
-    game.fillText(emojis["PLAYER"],positionJugador.x+5,positionJugador.y-15);//imprimir al jugador
+        game.fillText(emojis["PLAYER"],positionJugador.x+5,positionJugador.y-15);//imprimir al jugador
 
-    //Comparar la colisión entre jugador y el regalo
-    if((positionJugador.x).toFixed(2) == posicionGift.x && (positionJugador.y).toFixed(2) == posicionGift.y){
-        console.log("Ganaste!!!");
-        winLevel();
-    }
-    //Comparar la colisión con las bombas
-    for (let i = 0; i < bombitas.length; i++) {
-        if((positionJugador.x).toFixed(2) == (bombitas[i].positionX).toFixed(2) && (positionJugador.y).toFixed(2) == (bombitas[i].positionY).toFixed(2)){
-            console.log("Boom!!! REVENTASTE");
-            failed();
+        //Comparar la colisión entre jugador y el regalo
+        if((positionJugador.x).toFixed(2) == posicionGift.x && (positionJugador.y).toFixed(2) == posicionGift.y){
+            console.log("Ganaste!!!");
+            winLevel();
+        }
+        //Comparar la colisión con las bombas
+        for (let i = 0; i < bombitas.length; i++) {
+            if((positionJugador.x).toFixed(2) == (bombitas[i].positionX).toFixed(2) && (positionJugador.y).toFixed(2) == (bombitas[i].positionY).toFixed(2)){
+                console.log("Boom!!! REVENTASTE");
+                failed();
+            }
         }
     }
 }
@@ -190,6 +244,7 @@ function failed(){
         level = 0;//volver al nivel 1
         vidas = 3;//reiniciar vidas
         bombitas = []; //limpiar array al renderizar nuevamente el mapa
+        timeStart = undefined; //reinicia el tiempo almacenado a 0
         starGame();
     }
     else{
@@ -197,3 +252,13 @@ function failed(){
         starGame();
     }
 }
+
+//Imprimir el tiempo transcurrido
+function showTime(){
+    timePlayer =  Date.now() - timeStart; //resta el tiempo que avanza sin parar menos el almacenado cuando se inicio el juego
+    let formatDate = new Date(timePlayer);
+    let seconds = formatDate.getSeconds();
+    let minutes = formatDate.getMinutes();
+    timePlay.innerHTML = minutes + " min " + seconds + " segundos";
+}
+

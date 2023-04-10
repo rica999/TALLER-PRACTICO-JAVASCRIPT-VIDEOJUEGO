@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=McLaren&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>RICRIV-GAME</title>
+</head>
+<body>
+    <main>
+        <div class="container-game">
+            <canvas id="game"></canvas>
+            <div class="btn-directions" id="btnDirections">
+                <button id="btnUp">Arriba</button>
+                <button id="btnLeft">Izquierda</button>
+                <button id="btnDown">Abajo</button>
+                <button id="btnRight">Derecha</button>
+            </div>
+            <div class="description-game" >
+                <p>Vidas: <span id="lives"></span></p>
+                <p>Tiempo: <span id="timePlay"></span></p>
+                <p>Récord: <span id="timeRecord"></span></p>
+            </div>
+            <div class="btn-new-game hidden" id="btnNewGame">
+                <button id="btnReload"><a href="index.html">Empezar de nuevo</a></button>
+            </div>
+        </div>
+    </main>
+    <script src="mapa.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
