@@ -258,7 +258,9 @@ function movePlayer(){
         for (let i = 0; i < bombitas.length; i++) {
             if((positionJugador.x).toFixed(3) == (bombitas[i].positionX).toFixed(3) && (positionJugador.y).toFixed(3) == (bombitas[i].positionY).toFixed(3)){
                 console.log("Boom!!! REVENTASTE");
-                failed();
+                game.clearRect(bombitas[i].positionX-elementsSize,bombitas[i].positionY-elementsSize,elementsSize,elementsSize);//borrar en donde hubo colision
+                game.fillText(emojis["BOMB_COLLISION"],bombitas[i].positionX,bombitas[i].positionY);//insertar emoji colision
+                setTimeout(failed,1000);
             }
         }
     }
