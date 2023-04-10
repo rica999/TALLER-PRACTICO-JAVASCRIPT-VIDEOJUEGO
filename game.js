@@ -170,11 +170,11 @@ function recordValue(){
             timeRecord.innerHTML = minuteFinal+" min "+secondFinal+" segundos";
             if(window.innerWidth<600){
                 game.font="10px Verdana";
-                game.fillText("Superaste tu récord!!! Ahora tu récord es: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+                game.fillText("Superaste tu récord!!!: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
             }
             else{
                 game.font="35px Verdana";
-                game.fillText("Superaste tu récord!!! Ahora tu récord es: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
+                game.fillText("Superaste tu récord!!!: " + minuteFinal + " min "+ secondFinal + " segundos",canvasSize/2,canvasSize-canvasSize/9);
             }
         }
         else{
