@@ -15,6 +15,10 @@ let timeRecord = document.querySelector("#timeRecord");
 let btnDirections = document.querySelector("#btnDirections");
 let btnNewGame = document.querySelector("#btnNewGame");
 
+let btnSelection = document.querySelector("#btnSelection");
+let btnYes = document.querySelector("#btnYes");
+let btnNo = document.querySelector("#btnNo");
+
 let canvasSize;
 
 let timeStart;
@@ -241,11 +245,31 @@ function winLevel(){
 function failed(){
     vidas--; //restar una vida por cada fail
     if(vidas==0){
-        level = 0;//volver al nivel 1
-        vidas = 3;//reiniciar vidas
-        bombitas = []; //limpiar array al renderizar nuevamente el mapa
-        timeStart = undefined; //reinicia el tiempo almacenado a 0
-        starGame();
+        game.clearRect(0,0,canvasSize,canvasSize); //borrar el contenido del mapa
+        game.font="45px Verdana";
+        game.textAlign = "center";
+        game.fillText("Perdiste tus vidas",canvasSize/2,canvasSize/9);
+        game.font="85px Verdana";
+        game.fillText("😪",canvasSize/2,canvasSize/2);
+        game.font="45px Verdana";
+        game.fillText("¿Deseas continuar?",canvasSize/2,canvasSize-canvasSize/3);
+        btnDirections.classList.add("hidden");
+        btnSelection.classList.remove("hidden");
+        btnYes.addEventListener("click",()=>{
+            vidas = 3;//reiniciar vidas
+            bombitas = []; //limpiar array al renderizar nuevamente el mapa
+            starGame();
+            btnSelection.classList.add("hidden");
+            btnDirections.classList.remove("hidden");
+        })
+        btnNo.addEventListener("click",()=>{
+            level = 0;//volver al nivel 1
+            vidas = 3;//reiniciar vidas
+            bombitas = []; //limpiar array al renderizar nuevamente el mapa
+            timeStart = undefined; //reinicia el tiempo almacenado a 0
+            //starGame();
+            window.location.href="index.html";
+        })
     }
     else{
         bombitas = []; //limpiar array al renderizar nuevamente el mapa

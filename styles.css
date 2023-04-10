@@ -25,9 +25,10 @@ main{
     color: #215a6d;
     -webkit-text-stroke: 4px #2d2d29;
 }
-.btn-start-game,.btn-reload-game{
+.btn-start-game{
     font-size: 24px;
     margin: 8px 0;
+    margin-right: 50px;
 }
 .btn-start-game a{
     text-decoration: none;
@@ -78,6 +79,10 @@ span{
 }
 .hidden{
     display: none;
+}
+.btn-reload-game{
+    font-size: 24px;
+    margin: 8px 0;
 }
 @media (max-width:500px){
     .btn-directions button:first-child{
